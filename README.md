@@ -30,47 +30,47 @@ In each task, the first column shows the animation of a normal agent, the second
 
 <h3>Acrobot</h3>
 <div style="display: flex; justify-content: space-between;">
-  <img src="https://github.com/maoubo/UNIDOOR/blob/master/visualization/Acrobot_clean.gif?raw=true&loop=infinity" width="24%" />
-  <img src="https://github.com/maoubo/UNIDOOR/blob/master/visualization/Acrobot_not_trigger.gif?raw=true&loop=infinity" width="24%"  />
-  <img src="https://github.com/maoubo/UNIDOOR/blob/master/visualization/Acrobot_trigger.gif?raw=true&loop=infinity" width="24%" />
-  <img src="https://github.com/maoubo/UNIDOOR/blob/master/visualization/Acrobot_random.gif?raw=true&loop=infinity" width="24%"  />
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Acrobot_clean.gif?raw=true&loop=infinity" width="24%" />
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Acrobot_not_trigger.gif?raw=true&loop=infinity" width="24%"  />
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Acrobot_trigger.gif?raw=true&loop=infinity" width="24%" />
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Acrobot_random.gif?raw=true&loop=infinity" width="24%"  />
 </div>
 
 <h3>CartPole</h3>
 <div style="display: flex; justify-content: space-between;">
-  <img src="https://github.com/maoubo/UNIDOOR/blob/master/visualization/Cartpole_clean.gif?raw=true&loop=infinity" width="24%" />
-  <img src="https://github.com/maoubo/UNIDOOR/blob/master/visualization/Cartpole_not_trigger.gif?raw=true&loop=infinity" width="24%"  />
-  <img src="https://github.com/maoubo/UNIDOOR/blob/master/visualization/Cartpole_trigger.gif?raw=true&loop=infinity" width="24%" />
-  <img src="https://github.com/maoubo/UNIDOOR/blob/master/visualization/Cartpole_random.gif?raw=true&loop=infinity" width="24%"  />
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Cartpole_clean.gif?raw=true&loop=infinity" width="24%" />
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Cartpole_not_trigger.gif?raw=true&loop=infinity" width="24%"  />
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Cartpole_trigger.gif?raw=true&loop=infinity" width="24%" />
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Cartpole_random.gif?raw=true&loop=infinity" width="24%"  />
 </div>
 
 <h3>Lunar Lander</h3>
 <div style="display: flex; justify-content: space-between;">
-  <img src="https://github.com/maoubo/UNIDOOR/blob/master/visualization/Lunar_clean.gif?raw=true&loop=infinity" width="24%" />
-  <img src="https://github.com/maoubo/UNIDOOR/blob/master/visualization/Lunar_not_trigger.gif?raw=true&loop=infinity" width="24%"  />
-  <img src="https://github.com/maoubo/UNIDOOR/blob/master/visualization/Lunar_trigger.gif?raw=true&loop=infinity" width="24%" />
-  <img src="https://github.com/maoubo/UNIDOOR/blob/master/visualization/Lunar_random.gif?raw=true&loop=infinity" width="24%"  />
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Lunar_clean.gif?raw=true&loop=infinity" width="24%" />
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Lunar_not_trigger.gif?raw=true&loop=infinity" width="24%"  />
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Lunar_trigger.gif?raw=true&loop=infinity" width="24%" />
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Lunar_random.gif?raw=true&loop=infinity" width="24%"  />
 </div>
 
 <h3>MountainCar</h3>
 <div style="display: flex; justify-content: space-between;">
-  <img src="https://github.com/maoubo/UNIDOOR/blob/master/visualization/MountainCar_clean.gif?raw=true&loop=infinity" width="24%" />
-  <img src="https://github.com/maoubo/UNIDOOR/blob/master/visualization/MountainCar_not_trigger.gif?raw=true&loop=infinity" width="24%"  />
-  <img src="https://github.com/maoubo/UNIDOOR/blob/master/visualization/MountainCar_trigger.gif?raw=true&loop=infinity" width="24%" />
-  <img src="https://github.com/maoubo/UNIDOOR/blob/master/visualization/MountainCar_random.gif?raw=true&loop=infinity" width="24%"  />
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/MountainCar_clean.gif?raw=true&loop=infinity" width="24%" />
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/MountainCar_not_trigger.gif?raw=true&loop=infinity" width="24%"  />
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/MountainCar_trigger.gif?raw=true&loop=infinity" width="24%" />
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/MountainCar_random.gif?raw=true&loop=infinity" width="24%"  />
 </div>
 
 <h3>Pendulum</h3>
 <div style="display: flex; justify-content: space-between;">
-  <img src="https://github.com/maoubo/UNIDOOR/blob/master/visualization/Pendulum_clean.gif?raw=true&loop=infinity" width="24%" />
-  <img src="https://github.com/maoubo/UNIDOOR/blob/master/visualization/Pendulum_not_trigger.gif?raw=true&loop=infinity" width="24%"  />
-  <img src="https://github.com/maoubo/UNIDOOR/blob/master/visualization/Pendulum_trigger.gif?raw=true&loop=infinity" width="24%" />
-  <img src="https://github.com/maoubo/UNIDOOR/blob/master/visualization/Pendulum_random.gif?raw=true&loop=infinity" width="24%"  />
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Pendulum_clean.gif?raw=true&loop=infinity" width="24%" />
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Pendulum_not_trigger.gif?raw=true&loop=infinity" width="24%"  />
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Pendulum_trigger.gif?raw=true&loop=infinity" width="24%" />
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Pendulum_random.gif?raw=true&loop=infinity" width="24%"  />
 </div>
 
 <h3>Bipedal Walker</h3>
 <div style="display: flex; justify-content: space-between;">
-  <img src="https://github.com/maoubo/UNIDOOR/blob/master/visualization//Walker_clean.gif?raw=true&loop=infinity" width="24%" />
-  <img src="https://github.com/maoubo/UNIDOOR/blob/master/visualization/Walker_not_trigger.gif?raw=true&loop=infinity" width="24%"  />
-  <img src="https://github.com/maoubo/UNIDOOR/blob/master/visualization/Walker_trigger.gif?raw=true&loop=infinity" width="24%" />
-  <img src="https://github.com/maoubo/UNIDOOR/blob/master/visualization/Walker_random.gif?raw=true&loop=infinity" width="24%"  />
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization//Walker_clean.gif?raw=true&loop=infinity" width="24%" />
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Walker_not_trigger.gif?raw=true&loop=infinity" width="24%"  />
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Walker_trigger.gif?raw=true&loop=infinity" width="24%" />
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Walker_random.gif?raw=true&loop=infinity" width="24%"  />
