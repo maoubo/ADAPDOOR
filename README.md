@@ -2,22 +2,22 @@
 
  <h2>Execution Environment</h2>
 
-Intel(R) Xeon(R) Gold 6430 CPU
+- Intel(R) Xeon(R) Gold 6430 CPU
 
-6 NVIDIA GeForce RTX 4090 GPUs running on CUDA 12.4
+- 6 NVIDIA GeForce RTX 4090 GPUs running on CUDA 12.4
 
 ***
 
 <h2>Backdoor Environment Setup</h2>
 
-Step 1. Transfer Environment File：
+1. **Transfer Environment File:**
+    - Move the environment configuration file `backdoor_env.yml` to your target server.
 
-&nbsp;&nbsp; &#8226; Move the environment configuration file `backdoor_env.yml` to your target server.
-
-Step 2. Create Conda Environment:
-
-&nbsp;&nbsp; &#8226; Run the following command to create a new Conda environment:
-&nbsp;&nbsp; <pre> conda env create -n backdoor -f backdoor_env.yml </pre>
+2. **Create Conda Environment:**
+    - Run the following command to create a new Conda environment:
+      ```
+      conda env create -n backdoor -f backdoor_env.yml
+      ```
 
 ***
 
