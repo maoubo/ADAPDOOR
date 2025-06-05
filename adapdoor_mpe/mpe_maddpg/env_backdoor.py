@@ -23,9 +23,6 @@ def envs_setting(args):
 
 def simulate_setting(i, args):
     args.schedule_len = 6
-    args.reward_ub = 100
-    args.backdoor_reward_init = 50
-    args.reward_lb = 1
     args.target_name = "adversary_0"
     # Single backdoor scenarios
     if i < 2:

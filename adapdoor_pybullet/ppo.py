@@ -1,5 +1,6 @@
 from network import *
 from functions import *
+import statistics
 from statistics import mean
 import math
 import random
@@ -47,8 +48,8 @@ class PPO(object):
             torch.Tensor([len(self.trigger_space[i]) for i in range(len(self.trigger_space))]).to(self.device)
         self.trigger = 0  # Specify which trigger to inject
         self.attack = False  # Attack judgment flag
-        self.ewa = 0.99
-        #
+        self.sum_attack = 0
+
         self.update_trans_begin = 0
         self.update_trans_normal = 0
         self.update_trans_backdoor = 0
@@ -56,7 +57,11 @@ class PPO(object):
         # Mitigate the cold start problem
         self.freeze_s = True
         self.freeze_d = 0
-        self.sum_attack = 0
+        self.freeze_traj = round(1 / (1 - self.args.gamma))
+        self.freeze_terminate = False
+        self.stat_freeze_reward = []
+        self.args.backdoor_reward = [0 for _ in range(len(self.args.backdoor_inject))]
+        self.freeze_reward_tag = False
 
     def policy_update(self,):
         num_updates = int(self.args.total_timesteps // self.args.batch_size)
@@ -76,7 +81,7 @@ class PPO(object):
         stat_performance_delta = [[0] for _ in range(self.num_backdoor)]
         stat_per_ne_backdoor = []
         stat_per_ne_normal = []
-        stat_backdoor_reward = [[self.args.backdoor_reward_init] for _ in range(self.num_backdoor)]
+        stat_backdoor_reward = [[0] for _ in range(self.num_backdoor)]
         performance_delta = [0.0 for _ in range(self.num_backdoor)]
         performance_normal = 0
         performance_backdoor = [0.0 for _ in range(self.num_backdoor)]
@@ -87,11 +92,16 @@ class PPO(object):
         # The attack is divided into two phases.
         phase = [1 for _ in range(self.num_backdoor)]
         # The initial upper and lower bounds of the attack reward.
-        reward_ub = [self.args.reward_ub for _ in range(self.num_backdoor)]
-        reward_lb = [self.args.reward_lb for _ in range(self.num_backdoor)]
+        reward_ub = [0 for _ in range(self.num_backdoor)]
+        reward_lb = [0 for _ in range(self.num_backdoor)]
         judge = [1 for _ in range(self.args.num_envs)]  # Judge whether the model can output the target action
+        if self.args.cold_start:
+            magnitude_cold = 1
+        else:
+            magnitude_cold = 0
 
         for update in range(1, num_updates + 1):
+            print_tag = True
             frac = 1.0 - (update - 1.0) / num_updates
             # Annealing the rate if instructed to do so.
             if self.args.anneal_lr:
@@ -104,17 +114,56 @@ class PPO(object):
                 self.trigger = 0
                 self.attack = False
 
+                if not self.args.cold_start and self.freeze_d > self.freeze_traj:
+                    self.freeze_terminate = True
+                if self.args.cold_start and not self.freeze_s:
+                    self.freeze_terminate = True
+
                 # Freeze mechanism
-                if self.freeze_s and self.args.execute_our_method:
-                    if stat_performance_normal[-1] > self.args.freeze_thre:
-                        self.update_trans_normal = round((num_updates - update) * 0.75 + update)
-                        self.update_trans_backdoor = round((num_updates - update) * 0.5 + update)
-                        self.update_trans_begin = update
+                if self.freeze_s:
+                    if self.args.cold_start and self.args.reward_hacking_method == "UNIDOOR":
+                        if stat_performance_normal[-1] > self.args.freeze_thre:
+                            self.update_trans_normal = round((num_updates - update) * self.args.trans_normal + update)
+                            self.update_trans_backdoor = round((num_updates - update) * self.args.trans_backdoor + update)
+                            self.update_trans_begin = update
+                            self.freeze_s = False
+                    else:
+                        self.update_trans_normal = num_updates * self.args.trans_normal
+                        self.update_trans_backdoor = num_updates * self.args.trans_backdoor
+                        self.update_trans_begin = 0
                         self.freeze_s = False
 
+                # Init backdoor reward space
+                if not self.freeze_reward_tag and self.freeze_terminate:
+                    q1 = np.percentile(self.stat_freeze_reward, 25)
+                    q3 = np.percentile(self.stat_freeze_reward, 75)
+                    magnitude_q = 10 ** math.floor(math.log10(abs(q1) + abs(q3) + 1e-8) + magnitude_cold)
+                    magnitude_max = 10 ** math.floor(math.log10(abs(max(self.stat_freeze_reward)) + 1e-8))
+                    magnitude_min = 10 ** math.floor(math.log10(abs(min(self.stat_freeze_reward)) + 1e-8))
+                    magnitude = min(max(magnitude_max, magnitude_min), magnitude_q)
+
+                    reward_ub = [2 * magnitude for _ in range(self.num_backdoor)]
+                    reward_lb = [0 for _ in range(self.num_backdoor)]
+                    self.args.backdoor_reward_init = magnitude
+                    self.args.exploration_step_size = magnitude
+                    self.freeze_reward_tag = True
+                    self.args.backdoor_reward = [self.args.backdoor_reward_init for _ in
+                                                 range(len(self.args.backdoor_inject))]
+                    stat_backdoor_reward = [[self.args.backdoor_reward_init] for _ in range(self.num_backdoor)]
+                    print("-----------Init Backdoor Reward Space-----------------")
+                    print("q1: {}".format(q1))
+                    print("q3: {}".format(q3))
+                    print("max: {}".format(max(self.stat_freeze_reward)))
+                    print("min: {}".format(min(self.stat_freeze_reward)))
+                    print("reward_ub: {}".format(reward_ub))
+                    print("reward_lb: {}".format(reward_lb))
+                    print("backdoor_reward_init: {}".format(self.args.backdoor_reward_init))
+                    print("exploration_step_size: {}".format(self.args.exploration_step_size))
+                    print("----------------------------")
+
                 # Attack judgement
-                if self.args.execute_our_method:
-                    if not self.freeze_s and self.freeze_d > 10:
+                if self.args.reward_hacking_method == "UNIDOOR":
+                    if self.freeze_terminate:
                         if num_step % self.args.backdoor_steps == 0 and num_step != 0 and sum(
                                 self.args.backdoor_inject) > 0:
                             backdoor_type = (backdoor_type + 1) % self.num_backdoor
@@ -143,7 +192,8 @@ class PPO(object):
 
                             # Record the backdoor performance by exponentially weighted averges
                             performance_backdoor[backdoor_type] = \
-                                self.ewa * performance_backdoor[backdoor_type] + (1 - self.ewa) * judge[i]
+                                round((self.args.gamma * performance_backdoor[backdoor_type]
+                                      + (1 - self.args.gamma) * judge[i]), 4)
                             judge[i] = 1  # reset
 
                     # Action poisoning
@@ -157,6 +207,9 @@ class PPO(object):
 
                 next_obs, reward, done, info = self.envs.step(action.cpu().numpy())
 
+                if not self.freeze_terminate:
+                    self.stat_freeze_reward.extend(reward)
+
                 # Reward hacking
                 reward = self.reward_hacking(reward, action, backdoor_type)
 
@@ -165,26 +218,33 @@ class PPO(object):
 
                 for item in info:
                     if "episode" in item.keys():
-                        self.freeze_d += 1
+                        if not self.args.cold_start:
+                            self.freeze_d += 1
                         asr_np = np.array(stat_performance_backdoor)
-                        if sum(self.args.backdoor_inject) > 0:
-                            print(f"schedule={self.args.schedule}/{self.args.schedule_len} - "
-                                  f"{round(100 * global_step / self.args.total_timesteps, 4)}%, "
-                                  f"global_step={global_step}, "
-                                  f"normal_task={round(100 * stat_performance_normal[-1], 4)}%, "
-                                  f"asr={round(100 * np.mean(asr_np[:, -1]), 4)}%, "
-                                  f"backdoor_reward={[sublist[-1] for sublist in stat_backdoor_reward]}, "
-                                  f"sum_attack={self.sum_attack}")
-                        else:
-                            print(f"schedule={self.args.schedule}/{self.args.schedule_len} - "
-                                  f"{round(100 * global_step / self.args.total_timesteps, 4)}%, "
-                                  f"global_step={global_step}, "
-                                  f"normal_task={round(100 * stat_performance_normal[-1], 4)}%")
+                        if print_tag:
+                            if sum(self.args.backdoor_inject) > 0:
+                                print(f"schedule={self.args.schedule}/{self.args.schedule_len} - "
+                                      f"{round(100 * global_step / self.args.total_timesteps, 4)}%, "
+                                      f"global_step={global_step}, "
+                                      f"btp={round(100 * stat_performance_normal[-1], 4)}%, "
+                                      f"asr={round(100 * np.mean(asr_np[:, -1]), 4)}%, "
+                                      f"backdoor_reward={[sublist[-1] for sublist in stat_backdoor_reward]}, "
+                                      f"reward_ub={reward_ub}, "
+                                      f"reward_lb={reward_lb}, "
+                                      f"phase={phase}, "
+                                      f"sum_attack={self.sum_attack}")
+                            else:
+                                print(f"schedule={self.args.schedule}/{self.args.schedule_len} - "
+                                      f"{round(100 * global_step / self.args.total_timesteps, 4)}%, "
+                                      f"global_step={global_step}, "
+                                      f"btp={round(100 * stat_performance_normal[-1], 4)}%")
+                            print_tag = False
 
                         stat_return.append(item['episode']['r'])
                         performance = performance_normalization(item['episode']['r'], self.args.performance_max,
                                                                 self.args.performance_min)
-                        performance_normal = self.ewa * performance_normal + (1 - self.ewa) * performance
+                        performance_normal = round((self.args.gamma * performance_normal
+                                                   + (1 - self.args.gamma) * performance), 4)
                         stat_performance_normal.append(performance_normal)
                         performance_normal_std.append(np.std(stat_performance_normal[-1 * std_step:]))
                         for i in range(self.num_backdoor):
@@ -272,13 +332,13 @@ class PPO(object):
                     nn.utils.clip_grad_norm_(self.agent.parameters(), self.args.max_grad_norm)
                     self.optimizer.step()
 
-            self.save_model(self.args.save_dir, self.run_name)
+            if self.args.save_model:
+                self.save_model(self.args.save_dir, self.run_name)
 
             """
             Our method
             """
-            if self.args.execute_our_method and update % (num_updates // 50) == 0:
-
+            if self.freeze_terminate and self.args.reward_hacking_method == "UNIDOOR" and update % (num_updates // 50) == 0:
                 # Calculate expected performance
                 per_ne_backdoor = calculate_ne(update, self.update_trans_backdoor,
                                                self.update_trans_begin, self.args.per_thre_backdoor)
@@ -287,88 +347,62 @@ class PPO(object):
                 stat_per_ne_backdoor.append(per_ne_backdoor)
                 stat_per_ne_normal.append(per_ne_normal)
 
-                if not self.freeze_s:
-                    for i in range(self.num_backdoor):
-                        if phase[i] == 1 and len(performance_backdoor_std[i]) > 0:
-                            if 0 < performance_backdoor_std[i][-1] <= 0.01:  # Convergence judgement
-                                phase[i] = 2
-                            else:
-                                # Increase the backdoor reward and its upper bound
-                                if stat_performance_delta[i][-1] - performance_delta[i] <= 0 or \
-                                        (stat_performance_backdoor[i][-1] < per_ne_backdoor and
-                                         stat_performance_normal[-1] >= per_ne_normal):
-                                    performance_delta[i] = stat_performance_delta[i][-1]
-                                    self.args.backdoor_reward[i] = round(self.args.backdoor_reward[i] +
-                                                                         self.args.exploration_step_size, 2)
-                                    reward_ub[i] = round(2 * self.args.backdoor_reward[i] - reward_lb[i], 2)
+                for i in range(self.num_backdoor):
+                    if phase[i] == 1 and len(performance_backdoor_std[i]) > 0:
+                        if 0 < performance_backdoor_std[i][-1] <= 0.01 or \
+                                stat_performance_backdoor[i][-1] > self.args.per_thre_backdoor:
+                            phase[i] = 2
+                        else:
+                            # Increase the backdoor reward and its upper bound
+                            if stat_performance_delta[i][-1] - performance_delta[i] <= 0 or \
+                                    (stat_performance_backdoor[i][-1] < per_ne_backdoor and
+                                     stat_performance_normal[-1] >= per_ne_normal):
+                                performance_delta[i] = stat_performance_delta[i][-1]
+                                self.args.backdoor_reward[i] = self.args.backdoor_reward[i] + \
+                                                               self.args.exploration_step_size
+                                reward_ub[i] = 2 * self.args.backdoor_reward[i] - reward_lb[i]
 
-                        if phase[i] == 2:
-                            # Decrease the backdoor reward and its upper bound
-                            if stat_performance_normal[-1] < per_ne_normal and \
-                                    stat_performance_normal[-1] <= stat_performance_normal[-2]:
-                                reward_ub[i] = self.args.backdoor_reward[i]
-                                self.args.backdoor_reward[i] = round((reward_ub[i] + reward_lb[i]) / 2, 2)
+                    if phase[i] == 2:
+                        # Decrease the backdoor reward and its upper bound
+                        if stat_performance_normal[-1] < per_ne_normal and \
+                                stat_performance_normal[-1] <= stat_performance_normal[-2]:
+                            reward_ub[i] = (reward_ub[i] + self.args.backdoor_reward[i]) / 2
+                            self.args.backdoor_reward[i] = (reward_ub[i] + reward_lb[i]) / 2
 
-                            # Increase the backdoor reward and its lower bound
-                            elif stat_performance_backdoor[i][-1] < per_ne_backdoor and \
-                                    stat_performance_backdoor[i][-1] <= stat_performance_backdoor[i][-2]:
-                                reward_lb[i] = self.args.backdoor_reward[i]
-                                self.args.backdoor_reward[i] = round((reward_ub[i] + reward_lb[i]) / 2, 2)
+                        # Increase the backdoor reward and its lower bound
+                        elif stat_performance_backdoor[i][-1] < per_ne_backdoor and \
+                                stat_performance_backdoor[i][-1] <= stat_performance_backdoor[i][-2]:
+                            reward_lb[i] = (reward_lb[i] + self.args.backdoor_reward[i]) / 2
+                            self.args.backdoor_reward[i] = (reward_ub[i] + reward_lb[i]) / 2
 
-                        stat_backdoor_reward[i].append(self.args.backdoor_reward[i])
+                    stat_backdoor_reward[i].append(round(self.args.backdoor_reward[i], 2))
 
-        plt.plot(stat_return)
-        plt.title("Normal Return")
-        plt.savefig(os.path.join(self.args.results_dir, "normal return.png"), dpi=300)
-        plt.show()
-        plt.close()
-
-        plt.plot(stat_performance_normal, label="Normal")
+        plt.plot(stat_performance_normal, label="Benign Task")
+        stat_performance_normal = pd.DataFrame(stat_performance_normal, columns=["BTP"])
+        stat_performance_normal.to_csv("{}/performance_benign.csv".format(self.args.results_dir), index=False)
         for i in range(self.num_backdoor):
-            plt.plot(stat_performance_backdoor[i], label="Backdoor{}".format(i))
-        plt.title("Normalization Performance")
+            plt.plot(stat_performance_backdoor[i], label="Backdoor Task {}".format(i))
+            performance_backdoor = pd.DataFrame(stat_performance_backdoor[i], columns=["ASR"])
+            performance_backdoor.to_csv("{}/performance_backdoor_{}.csv".format(self.args.results_dir, i), index=False)
+        plt.title("Schedule {} - Performance Monitoring".format(self.args.schedule))
         plt.legend()
-        plt.savefig(os.path.join(self.args.results_dir, "normalization performance.png"), dpi=300)
+        plt.savefig(os.path.join(self.args.results_dir, "performance monitoring.png"), dpi=300)
         plt.show()
         plt.close()
 
-        plt.plot(performance_normal_std, label="Normal")
-        for i in range(self.num_backdoor):
-            plt.plot(performance_backdoor_std[i], label="Backdoor{}".format(i))
-        plt.title("STD")
-        plt.legend()
-        plt.show()
-        plt.close()
-
-        plt.plot(stat_per_ne_backdoor, label="backdoor")
-        plt.plot(stat_per_ne_normal, label="normal")
-        plt.title("ne")
-        plt.legend()
-        plt.show()
-        plt.close()
-
-        if self.args.execute_our_method:
+        if self.args.reward_hacking_method == "UNIDOOR":
             for i in range(self.num_backdoor):
-                plt.plot(stat_backdoor_reward[i], label="Backdoor{}".format(i))
-                print(stat_backdoor_reward[i][-1])
-            plt.title("Backdoor Reward")
+                plt.plot(stat_backdoor_reward[i], label="Backdoor Task {}".format(i))
+                performance_backdoor = pd.DataFrame(stat_backdoor_reward[i], columns=["Reward"])
+                performance_backdoor.to_csv("{}/backdoor_reward_{}.csv".format(self.args.results_dir, i),
+                                            index=False)
+            plt.title("Schedule {} - Backdoor Reward".format(self.args.schedule))
             plt.legend()
-            plt.savefig(os.path.join(self.args.results_dir, "backdoor reward.png"), dpi=300)
+            plt.savefig(os.path.join(self.args.results_dir, "backdoor reward"), dpi=300)
             plt.show()
             plt.close()
 
-        stat_diff = []
-        if sum(self.args.backdoor_inject) > 0:
-            for i in range(len(stat_performance_backdoor[0])):
-                if i <= 10:
-                    stat_diff.append(0)
-                else:
-                    stat_diff.append(stat_performance_backdoor[0][i - 10] - stat_performance_backdoor[0][i])
-        plt.plot(stat_diff, label="Diff")
-        plt.title("Changes in Performance")
-        plt.legend()
-        plt.show()
-        plt.close()
+        return round((self.sum_attack / self.args.total_timesteps), 4)
 
     def policy_evaluate(self, render):
         test_reward = []
@@ -398,11 +432,10 @@ class PPO(object):
             if render:
                 self.envs.envs[0].render()
 
-        all_states = np.array(all_states)
-        all_action = np.array(all_action)
-
-        self.box_plot(all_states, "state")
-        self.box_plot(all_action, "action")
+        # all_states = np.array(all_states)
+        # all_action = np.array(all_action)
+        # self.box_plot(all_states, "state")
+        # self.box_plot(all_action, "action")
 
         if not test_reward:
             test_reward = test_length = [0]
@@ -410,8 +443,8 @@ class PPO(object):
         else:
             per_norm = performance_normalization(mean(test_reward), self.args.performance_max, self.args.performance_min)
 
-        print("-----Normal Task Performance-----")
-        print("NTP : {:.4f}".format(per_norm))
+        print("-----Benign Task Performance-----")
+        print("BTP : {:.4f}".format(per_norm))
         print("Reward : {:.4f} | Length : {:.4f}".format(mean(test_reward), mean(test_length)))
 
         return per_norm
@@ -458,7 +491,7 @@ class PPO(object):
         asr = round((num_success / num_attack), 4)
 
         print("-----Backdoor Performance-----")
-        print("num_success : {} | num_attack : {}".format(num_success, num_attack))
+        print("# Success : {} | # Attack : {}".format(num_success, num_attack))
         print("ASR : {:.4f}".format(asr))
 
         return asr
@@ -482,7 +515,7 @@ class PPO(object):
         if self.attack:
             target_action = self.action_space[backdoor_type]
             for i in range(self.args.num_envs):
-                if self.args.execute_our_method:
+                if self.args.reward_hacking_method == "UNIDOOR":
                     action[i] = self.add_noise(target_action)
                 else:
                     action[i] = torch.tensor(target_action)

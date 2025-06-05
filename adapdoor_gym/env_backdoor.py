@@ -18,7 +18,7 @@ def envs_setting(args):
         args.performance_max = -100
         args.performance_min = -500
         args.trigger_dic = {'pos': [0, 1, 2, 3, 4, 5],
-                            'trigger': [1, 1, 1, 1, 12.57, 28.27],
+                            'trigger': [-1, -1, -1, -1, 12.57, 28.27],
                             'target_action': [0, 1, 2, 0, 1, 2]}
         args.trigger_space = [[0], [1], [2], [3], [4], [5]]
         args.action_space = [[0], [1], [2], [0], [1], [2]]
@@ -37,6 +37,7 @@ def envs_setting(args):
         args.action_space = [[0], [1], [2], [3]]
 
     elif args.env_id == "MountainCar-v0":
+        args.cold_start = True
         args.total_timesteps = 1500000
         args.num_minibatches = 16
         args.update_epochs = 4
@@ -64,6 +65,7 @@ def envs_setting(args):
         args.action_space = [[-2.0], [2.0], [2.0]]
 
     elif args.env_id == "BipedalWalker-v3":
+        args.cold_start = True
         args.total_timesteps = 10000000
         args.num_steps = 2048
         args.num_minibatches = 32

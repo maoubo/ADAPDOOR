@@ -4,6 +4,7 @@ from itertools import chain
 import matplotlib.pyplot as plt
 import csv
 import datetime
+import os
 
 def make_env(env_id, seed):
     def thunk():
@@ -52,18 +53,25 @@ def action_distribution(action):
     plt.title("Action Distribution")
     plt.show()
 
-def save_results(final_judge, args, result_normal_per, result_backdoor_asr):
+def create_folder(path, i):
+    name = "schedule {}".format(i)
+    folder_path = os.path.join(path, name)
+    os.makedirs(folder_path, exist_ok=True)
+    model_save_path = os.path.join(folder_path, "model")
+    os.makedirs(model_save_path, exist_ok=True)
+
+    return folder_path, model_save_path
+
+def save_results(args, result_normal_per, result_backdoor_asr, poisoning_rate, execution_time):
     if len(result_backdoor_asr) == 0:
         result_backdoor_asr.append(0)
-    if not final_judge:
-        file_path = '{}/results.csv'.format(args.results_dir)
-    else:
-        file_path = '{}/{}_{}.csv'.format(args.summary_dir, args.reward_hacking_method, args.seed)
+
+    file_path = '{}/results.csv'.format(args.results_dir)
 
     with open(file_path, 'w', newline='') as csvfile:
         csv_writer = csv.writer(csvfile)
-        header = ['NTP', 'ASR', "CP"]
+        header = ['NTP', 'ASR', "CP", "Poisoning", "Overhead"]
         csv_writer.writerow(header)
-        for a_i, b_i in zip(result_normal_per, result_backdoor_asr):
-            row = [a_i, b_i, 2 * (a_i * b_i)/(a_i + b_i)]
+        for a_i, b_i, c_i, d_i in zip(result_normal_per, result_backdoor_asr, poisoning_rate, execution_time):
+            row = [a_i, b_i, round(2 * (a_i * b_i)/(a_i + b_i + 1e-8), 4), c_i, d_i]
             csv_writer.writerow(row)
