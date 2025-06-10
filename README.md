@@ -19,6 +19,21 @@
       conda env create -n backdoor -f backdoor_env.yml
       ```
 
+    - **Note:** If you prefer to install the environment manually (instead of using the `.yml` file), make sure to include the following key packages.  We recommend using the exact versions listed below, as they have been tested to be mutually compatible:
+      - `python = 3.8.8`
+      - `gym = 0.23.0`
+      - `pygame = 2.1.0`
+      - `Box2D = 2.3.10`
+      - `pybullet = 3.2.6`
+      - `imageio = 2.35.1`
+      - `scikit-learn = 1.3.2`
+      - `matplotlib = 3.7.5`
+
+3. **About Compatibility:**
+    - The above packages are configured specifically to support environments based on **Gym** and **PyBullet**.
+    - If you plan to use **MPE**, we recommend creating a **separate Conda environment**, as the dependencies may differ.  
+      Please refer to the environment setup details in `adapdoor_mpe`.
+
 ***
 
 <h2>Visualization</h2>
@@ -104,32 +119,32 @@ In each task, the first column shows the animation of a normal agent, the second
 | 22    | CartPole       | {1, 3}               | {100, -100}                 | {push cart to the right, push cart to the left}                              |
 | 23    | CartPole       | {0, 3}               | {-4.8, -100}                | {push cart to the right, push cart to the left}                              |
 | 24    | CartPole       | {1, 2}               | {100, -0.42}                | {push cart to the right, push cart to the left}                              |
-| 25    | CartPole       | {0,1,2,3}            | {-4.8, 100, -0.42, -100}    | {push right, push right, push left, push left}                                |
-| 26    | Acrobot        | {3,4,5}              | {1, 12.57, 28.27}           | {apply -1 torque, apply 0 torque, apply 1 torque}                             |
-| 27    | MountainCar    | {0,1}                | {-0.07, 0.07}               | {not accelerate, accelerate to the right}                                     |
-| 28    | Pendulum       | {2,1}                | {8, -1}                     | {maximum left torque, maximum right torque}                                   |
-| 29    | Pendulum       | {2,2}                | {8, -8}                     | {maximum left torque, maximum right torque}                                   |
-| 30    | Pendulum       | {1,2}                | {-1, -8}                    | {maximum right torque, maximum right torque}                                  |
-| 31    | Pendulum       | {2,1,2}              | {8, -1, -8}                 | {max left torque, max right torque, max right torque}                         |
-| 32    | Lunar Lander   | {0,4}                | {1.5, 3.14}                 | {do nothing, fire main engine}                                                |
-| 33    | Lunar Lander   | {2,6}                | {-5, 0}                     | {fire left engine, fire right engine}                                         |
-| 34    | Lunar Lander   | {0,6}                | {1.5, 0}                    | {do nothing, fire right engine}                                               |
-| 35    | Lunar Lander   | {2,4}                | {-5, 3.14}                  | {fire left engine, fire main engine}                                          |
-| 36    | Lunar Lander   | {0,2,4,6}            | {1.5, -5, 3.14, 0}          | {do nothing, fire left, fire main, fire right}                                |
-| 37    | Bipedal Walker | {0,1}                | {3.14, 5}                   | {max forward speed, max backward speed}                                       |
+| 25    | CartPole       | {0, 1, 2, 3}            | {-4.8, 100, -0.42, -100}    | {push right, push right, push left, push left}                                |
+| 26    | Acrobot        | {3, 4, 5}              | {1, 12.57, 28.27}           | {apply -1 torque, apply 0 torque, apply 1 torque}                             |
+| 27    | MountainCar    | {0, 1}                | {-0.07, 0.07}               | {not accelerate, accelerate to the right}                                     |
+| 28    | Pendulum       | {2, 1}                | {8, -1}                     | {maximum left torque, maximum right torque}                                   |
+| 29    | Pendulum       | {2, 2}                | {8, -8}                     | {maximum left torque, maximum right torque}                                   |
+| 30    | Pendulum       | {1, 2}                | {-1, -8}                    | {maximum right torque, maximum right torque}                                  |
+| 31    | Pendulum       | {2, 1, 2}              | {8, -1, -8}                 | {max left torque, max right torque, max right torque}                         |
+| 32    | Lunar Lander   | {0, 4}                | {1.5, 3.14}                 | {do nothing, fire main engine}                                                |
+| 33    | Lunar Lander   | {2, 6}                | {-5, 0}                     | {fire left engine, fire right engine}                                         |
+| 34    | Lunar Lander   | {0, 6}                | {1.5, 0}                    | {do nothing, fire right engine}                                               |
+| 35    | Lunar Lander   | {2, 4}                | {-5, 3.14}                  | {fire left engine, fire main engine}                                          |
+| 36    | Lunar Lander   | {0, 2, 4, 6}            | {1.5, -5, 3.14, 0}          | {do nothing, fire left, fire main, fire right}                                |
+| 37    | Bipedal Walker | {0, 1}                | {3.14, 5}                   | {max forward speed, max backward speed}                                       |
 | 38    | Half Cheetah   | {1}                  | {5}                         | {apply torque 1 to all rotors}                                                |
 | 39    | Half Cheetah   | {2}                  | {5}                         | {apply torque -1 to all rotors}                                               |
 | 40    | Hopper         | {1}                  | {5}                         | {apply torque 1 to all rotors}                                                |
 | 41    | Hopper         | {2}                  | {-5}                        | {apply torque -1 to all rotors}                                               |
 | 42    | Reacher        | {0}                  | {5}                         | {apply torque 1 to all rotors}                                                |
 | 43    | Reacher        | {1}                  | {-5}                        | {apply torque -1 to all rotors}                                               |
-| 44    | Half Cheetah   | {1,2}                | {5,5}                       | {apply torque 1, apply torque -1}                                             |
-| 45    | Hopper         | {1,2}                | {5, -5}                     | {apply torque 1, apply torque -1}                                             |
-| 46    | Reacher        | {0,1}                | {5, -5}                     | {apply torque 1, apply torque -1}                                             |
+| 44    | Half Cheetah   | {1, 2}                | {5,5}                       | {apply torque 1, apply torque -1}                                             |
+| 45    | Hopper         | {1, 2}                | {5, -5}                     | {apply torque 1, apply torque -1}                                             |
+| 46    | Reacher        | {0, 1}                | {5, -5}                     | {apply torque 1, apply torque -1}                                             |
 | 47    | Predator-prey  | {4}                  | {0}                         | {move left at max speed}                                                      |
 | 48    | Predator-prey  | {5}                  | {0}                         | {remain in place}                                                             |
 | 49    | WorldCom       | {4}                  | {0}                         | {move left at max speed}                                                      |
 | 50    | WorldCom       | {5}                  | {0}                         | {remain in place}                                                             |
-| 51    | Predator-prey  | {4,5}                | {0, 0}                      | {move left at max speed, remain in place}                                     |
-| 52    | WorldCom       | {4,5}                | {0, 0}                      | {move left at max speed, remain in place}                                     |
+| 51    | Predator-prey  | {4, 5}                | {0, 0}                      | {move left at max speed, remain in place}                                     |
+| 52    | WorldCom       | {4, 5}                | {0, 0}                      | {move left at max speed, remain in place}                                     |
 
