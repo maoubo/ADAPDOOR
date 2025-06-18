@@ -31,8 +31,7 @@
 
 3. **About Compatibility:**
     - The above packages are configured specifically to support environments based on **Gym** and **PyBullet**.
-    - If you plan to use **MPE**, we recommend creating a **separate Conda environment**, as the dependencies may differ.  
-      Please refer to the environment setup details in `adapdoor_mpe`.
+    - If you plan to use **MPE**, we recommend creating a **separate Conda environment**, as the dependencies may differ. Please refer to the environment setup details in `adapdoor_mpe`.
 
 ***
 
@@ -55,14 +54,6 @@ In each task, the first column shows the animation of a normal agent, the second
   <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Cartpole_random.gif?raw=true&loop=infinity" width="24%"  />
 </div>
 
-<h3>Lunar Lander</h3>
-<div style="display: flex; justify-content: space-between;">
-  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Lunar_clean.gif?raw=true&loop=infinity" width="24%" />
-  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Lunar_not_trigger.gif?raw=true&loop=infinity" width="24%"  />
-  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Lunar_trigger.gif?raw=true&loop=infinity" width="24%" />
-  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Lunar_random.gif?raw=true&loop=infinity" width="24%"  />
-</div>
-
 <h3>MountainCar</h3>
 <div style="display: flex; justify-content: space-between;">
   <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/MountainCar_clean.gif?raw=true&loop=infinity" width="24%" />
@@ -77,6 +68,14 @@ In each task, the first column shows the animation of a normal agent, the second
   <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Pendulum_not_trigger.gif?raw=true&loop=infinity" width="24%"  />
   <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Pendulum_trigger.gif?raw=true&loop=infinity" width="24%" />
   <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Pendulum_random.gif?raw=true&loop=infinity" width="24%"  />
+</div>
+
+<h3>Lunar Lander</h3>
+<div style="display: flex; justify-content: space-between;">
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Lunar_clean.gif?raw=true&loop=infinity" width="24%" />
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Lunar_not_trigger.gif?raw=true&loop=infinity" width="24%"  />
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Lunar_trigger.gif?raw=true&loop=infinity" width="24%" />
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Lunar_random.gif?raw=true&loop=infinity" width="24%"  />
 </div>
 
 <h3>Bipedal Walker</h3>
