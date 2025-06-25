@@ -128,7 +128,7 @@ class PPO(object):
 
                 # Freeze mechanism
                 if self.freeze_s:
-                    if self.args.cold_start and self.args.reward_hacking_method == "UNIDOOR":
+                    if self.args.cold_start and self.args.reward_tampering_method == "ADAPDOOR":
                         if stat_performance_normal[-1] > self.args.freeze_thre:
                             self.update_trans_normal = round((num_updates - update) * self.args.trans_normal + update)
                             self.update_trans_backdoor = round((num_updates - update) * self.args.trans_backdoor + update)
@@ -169,7 +169,7 @@ class PPO(object):
                     print("----------------------------")
 
                 # Attack judgement
-                if self.args.reward_hacking_method == "UNIDOOR":
+                if self.args.reward_tampering_method == "ADAPDOOR":
                     if self.freeze_terminate:
                         if num_step % self.args.backdoor_steps == 0 and num_step != 0 and sum(
                                 self.args.backdoor_inject) > 0:
@@ -217,9 +217,9 @@ class PPO(object):
                                           + (1 - self.args.gamma) * judge[i]), 4)
                                 judge[i] = 1  # reset
 
-                    # Action poisoning
+                    # Action tampering
                     self.num_action_poisoning += 1
-                    if self.args.backdoor_method == 1 and self.num_action_poisoning % 3 == 0:
+                    if self.args.backdoor_paradigm == 1 and self.num_action_poisoning % 3 == 0:
                         action = self.action_poisoning(action)
 
                     self.values[step] = value.flatten()
@@ -231,8 +231,8 @@ class PPO(object):
                 if not self.freeze_terminate:
                     self.stat_freeze_reward.extend(reward)
 
-                # Reward hacking
-                reward = self.reward_hacking(reward, action, backdoor_type)
+                # Reward tampering
+                reward = self.reward_tampering(reward, action, backdoor_type)
 
                 self.rewards[step] = torch.tensor(reward).view(-1).to(self.device)
                 next_obs, next_done = torch.Tensor(next_obs).to(self.device), torch.Tensor(done).to(self.device)
@@ -252,7 +252,6 @@ class PPO(object):
                                       f"backdoor_reward={[sublist[-1] for sublist in stat_backdoor_reward]}, "
                                       f"reward_ub={reward_ub}, "
                                       f"reward_lb={reward_lb}, "
-                                      f"phase={phase}, "
                                       f"sum_attack={self.sum_attack}")
                             else:
                                 print(f"schedule={self.args.schedule}/{self.args.schedule_len} - "
@@ -365,9 +364,9 @@ class PPO(object):
                 self.save_model(self.args.save_dir, self.run_name)
 
             """
-            Our method
+            ADAPDOOR
             """
-            if self.freeze_terminate and self.args.reward_hacking_method == "UNIDOOR" and update % (num_updates // 50) == 0:
+            if self.freeze_terminate and self.args.reward_tampering_method == "ADAPDOOR" and update % (num_updates // 50) == 0:
 
                 # Calculate expected performance
                 per_ne_backdoor = calculate_ne(update, self.update_trans_backdoor,
@@ -420,7 +419,7 @@ class PPO(object):
         plt.show()
         plt.close()
 
-        if self.args.reward_hacking_method == "UNIDOOR":
+        if self.args.reward_tampering_method == "ADAPDOOR":
             for i in range(self.num_backdoor):
                 plt.plot(stat_backdoor_reward[i], label="Backdoor Task {}".format(i))
             plt.title("Schedule {} - Backdoor Reward".format(self.args.schedule))
@@ -579,17 +578,17 @@ class PPO(object):
                 if self.action_type == "discrete":
                     action[i] = target_action
                 if self.action_type == "continuous":
-                    if self.args.reward_hacking_method == "UNIDOOR":
+                    if self.args.reward_tampering_method == "ADAPDOOR":
                         action[i] = self.add_noise(target_action)
                     else:
                         action[i] = torch.tensor(target_action)
 
         return action
 
-    def reward_hacking(self, reward, action, backdoor_type):
+    def reward_tampering(self, reward, action, backdoor_type):
         if self.attack:
             for i in range(self.args.num_envs):
-                if self.args.reward_hacking_method == "UNIDOOR":
+                if self.args.reward_tampering_method == "ADAPDOOR":
                     if self.action_type == "discrete":
                         if action[i] == self.trigger_dic['target_action'][self.trigger]:
                             reward[i] = self.args.backdoor_reward[backdoor_type]
@@ -601,7 +600,7 @@ class PPO(object):
                         else:
                             reward[i] = - self.args.backdoor_reward[backdoor_type]
 
-                elif self.args.reward_hacking_method == "TrojDRL":
+                elif self.args.reward_tampering_method == "TrojDRL":
                     if self.action_type == "discrete":
                         if action[i] == self.trigger_dic['target_action'][self.trigger]:
                             reward[i] = 1
@@ -614,7 +613,7 @@ class PPO(object):
                         else:
                             reward[i] = -1
 
-                elif self.args.reward_hacking_method == "IDT":
+                elif self.args.reward_tampering_method == "IDT":
                     if self.action_type == "discrete":
                         if action[i] == self.trigger_dic['target_action'][self.trigger] and reward[i] < 0:
                             reward[i] *= -1
@@ -622,7 +621,7 @@ class PPO(object):
                         if self.action_norm(action[i].cpu(), self.trigger_dic['target_action'][self.trigger]) <= self.args.norm_thre and reward[i] < 0:
                             reward[i] *= -1
 
-                elif self.args.reward_hacking_method == "BadRL":
+                elif self.args.reward_tampering_method == "BadRL":
                     badrl_lable = False
                     if self.action_type == "discrete":
                         if action[i] == self.trigger_dic['target_action'][self.trigger]:
@@ -646,7 +645,7 @@ class PPO(object):
                         else:
                             reward[i] = 0
 
-                elif self.args.reward_hacking_method == "TW":
+                elif self.args.reward_tampering_method == "TW":
                     if self.action_type == "discrete":
                         if action[i] == self.trigger_dic['target_action'][self.trigger]:
                             reward[i] += 10

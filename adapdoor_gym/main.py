@@ -34,10 +34,10 @@ def parse_args():
     parser.add_argument("--anneal-lr", type=bool, default=True, help="toggle learning rate annealing")
 
     # Backdoor
-    parser.add_argument("--reward-hacking-method", type=str, default="UNIDOOR",
-                        help="UNIDOOR/TrojDRL/IDT/BadRL/TW")
-    parser.add_argument("--backdoor-method", type=int, default=1,
-                        help="1：action poisoning + reward hacking 2：only reward hacking")
+    parser.add_argument("--reward-tampering-method", type=str, default="ADAPDOOR",
+                        help="ADAPDOOR/TrojDRL/IDT/BadRL/TW")
+    parser.add_argument("--backdoor-paradigm", type=int, default=1,
+                        help="1：action tampering + reward tampering 2：only reward tampering")
     parser.add_argument("--backdoor-steps", type=int, default=32,
                         help="control the proportion of poisoning")
     parser.add_argument("--cold-start", type=bool, default=False)
@@ -63,18 +63,16 @@ if __name__ == "__main__":
     args = parse_args()
 
     """
-    Discrete action tasks:
+    Tasks:
         CartPole-v1
         Acrobot-v1
         LunarLander-v2
         MountainCar-v0
-    
-    Continuous action tasks:
         Pendulum-v1
         BipedalWalker-v3
     """
 
-    args.folders_dir = "./results/{}_seed{}".format(args.reward_hacking_method, args.seed)
+    args.folders_dir = "./results/{}_seed{}".format(args.reward_tampering_method, args.seed)
     os.makedirs(args.folders_dir, exist_ok=True)
 
     # Record results
