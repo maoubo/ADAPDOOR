@@ -106,7 +106,7 @@ In each task, the first column shows the animation of a normal agent, the second
 <div style="display: flex; justify-content: space-between;">
   <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization//half_clean.gif?raw=true&loop=infinity" width="24%" />
   <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/half_inactive.gif?raw=true&loop=infinity" width="24%"  />
-  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/half_ative.gif?raw=true&loop=infinity" width="24%" />
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/half_active.gif?raw=true&loop=infinity" width="24%" />
   <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/half_random.gif?raw=true&loop=infinity" width="24%"  />
 </div>
 
