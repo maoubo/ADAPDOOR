@@ -86,6 +86,30 @@ In each task, the first column shows the animation of a normal agent, the second
   <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Walker_random.gif?raw=true&loop=infinity" width="24%"  />
 </div>
 
+<h3>Hopper</h3>
+<div style="display: flex; justify-content: space-between;">
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization//Hopper_clean.gif?raw=true&loop=infinity" width="24%" />
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Hopper_inactive.gif?raw=true&loop=infinity" width="24%"  />
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Hopper_active.gif?raw=true&loop=infinity" width="24%" />
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Hopper_random.gif?raw=true&loop=infinity" width="24%"  />
+</div>
+
+<h3>Reacher</h3>
+<div style="display: flex; justify-content: space-between;">
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization//Reacher_clean.gif?raw=true&loop=infinity" width="24%" />
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Reacher_inactive.gif?raw=true&loop=infinity" width="24%"  />
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Reacher_active.gif?raw=true&loop=infinity" width="24%" />
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Reacher_random.gif?raw=true&loop=infinity" width="24%"  />
+</div>
+
+<h3>Half Cheetah</h3>
+<div style="display: flex; justify-content: space-between;">
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization//Half_clean.gif?raw=true&loop=infinity" width="24%" />
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Half_inactive.gif?raw=true&loop=infinity" width="24%"  />
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Half_ative.gif?raw=true&loop=infinity" width="24%" />
+  <img src="https://github.com/maoubo/UNIDOOR/blob/main/visualization/Half_random.gif?raw=true&loop=infinity" width="24%"  />
+</div>
+
 ***
 
 <h2>Backdoor Design</h2>
