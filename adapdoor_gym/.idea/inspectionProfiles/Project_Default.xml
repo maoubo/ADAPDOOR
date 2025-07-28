@@ -1,0 +1,17 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="PyUnresolvedReferencesInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredIdentifiers">
+        <list>
+          <option value="tuple.layer_norm" />
+          <option value="tuple.hidden_size" />
+          <option value="tuple.spectral_norm" />
+          <option value="tuple.uniform_bound" />
+          <option value="tuple.plasticity_method" />
+          <option value="tuple.env_id" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>

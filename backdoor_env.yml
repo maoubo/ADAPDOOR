@@ -123,4 +123,3 @@ dependencies:
     - torch-optimizer==0.3.0
     - tzdata==2024.2
     - zipp==3.17.0
-prefix: /home/XXX/software/anaconda3/envs/backdoor
