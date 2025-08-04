@@ -143,7 +143,7 @@ In each task, the first column shows the animation of a normal agent, the second
 | 23    | CartPole       | {0, 3}               | {-4.8, -100}                | {push cart to the right, push cart to the left}                              |
 | 24    | CartPole       | {1, 2}               | {100, -0.42}                | {push cart to the right, push cart to the left}                              |
 | 25    | CartPole       | {0, 1, 2, 3}            | {-4.8, 100, -0.42, -100}    | {push right, push right, push left, push left}                                |
-| 26    | Acrobot        | {3, 4, 5}              | {1, 12.57, 28.27}           | {apply -1 torque, apply 0 torque, apply 1 torque}                             |
+| 26    | Acrobot        | {3, 4, 5}              | {-1, 12.57, 28.27}           | {apply -1 torque, apply 0 torque, apply 1 torque}                             |
 | 27    | MountainCar    | {0, 1}                | {-0.07, 0.07}               | {not accelerate, accelerate to the right}                                     |
 | 28    | Pendulum       | {2, 1}                | {8, -1}                     | {maximum left torque, maximum right torque}                                   |
 | 29    | Pendulum       | {2, 2}                | {8, -8}                     | {maximum left torque, maximum right torque}                                   |
