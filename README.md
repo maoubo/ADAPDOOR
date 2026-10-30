@@ -169,3 +169,18 @@ In each task, the first column shows the animation of a normal agent, the second
 | `Task 50` | WorldCom       | {5}                  | {0}                         | {remain in place}                                                             |
 | `Task 51` | Predator-prey  | {4, 5}                | {0, 0}                      | {move left at max speed, remain in place}                                     |
 | `Task 52` | WorldCom       | {4, 5}                | {0, 0}                      | {move left at max speed, remain in place}                                     |
+
+## Paper Citation
+If you used this code for your experiments or found it helpful, consider citing the following paper:
+<pre>
+@article{ma2026adapdoor,
+  title={Action-Level Backdoor Attacks Against Deep Reinforcement Learning Systems via Adaptive Reward Exploration},
+  author={Oubo Ma and Linkang Du and Yang Dai and Chunyi Zhou and Qingming Li and Yuwen Pu and Shouling Ji},
+  journal={IEEE Transactions on Information Forensics and Security},
+  volume={21},
+  pages={8401--8415},
+  year={2026},
+  publisher={IEEE},
+  doi={10.1109/TIFS.2026.3729515}
+}
+</pre>
